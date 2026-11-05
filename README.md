@@ -11,7 +11,7 @@ operator; Codex does not execute them.
 - Server-rendered pages for dashboard, assets, work orders, inventory,
   dependencies, failures, and reports
 - Next.js Route Handlers under `app/api`
-- `mysql2/promise` connection pool with parameterized SQL
+- `mysql2/promise ` connection pool with parameterized SQL
 - Zod request validation
 - Optional Redis cache-aside reads for dashboard, assets, asset hierarchy,
   work orders, maintenance events, failures, dependencies, inventory, and reports
