@@ -145,6 +145,32 @@ export function createCacheCore({ namespace, getStore, prepareStore, logFailure,
     }
   }
 
+  async function listCacheEntries() {
+    try {
+      const store = await connected();
+      if (!store) return { configured: false, reachable: false, count: 0, entries: [] };
+
+      const keys = [];
+      let cursor = "0";
+      do {
+        const [nextCursor, batch] = await store.scan(cursor, "MATCH", `${namespace}:*`, "COUNT", 100);
+        cursor = nextCursor;
+        // Tag generations are cache invalidation metadata, not cached values.
+        keys.push(...batch.filter((key) => !key.startsWith(`${namespace}:tag:`)));
+      } while (cursor !== "0");
+
+      const entries = await Promise.all(keys.map(async (key) => {
+        const ttl = await store.ttl(key);
+        return { key, ttlSeconds: ttl >= 0 ? ttl : null };
+      }));
+      entries.sort((a, b) => a.key.localeCompare(b.key));
+      return { configured: true, reachable: true, count: entries.length, entries };
+    } catch (error) {
+      logFailure("list", error);
+      return { configured: true, reachable: false, count: 0, entries: [] };
+    }
+  }
+
   async function inspectKey(logicalKey, tags = []) {
     try {
       const store = await connected();
@@ -164,5 +190,5 @@ export function createCacheCore({ namespace, getStore, prepareStore, logFailure,
     }
   }
 
-  return { readCache, writeCache, deleteCache, cached, invalidate, redisStatus, inspectKey };
+  return { readCache, writeCache, deleteCache, cached, invalidate, redisStatus, inspectKey, listCacheEntries };
 }

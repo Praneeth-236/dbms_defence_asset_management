@@ -184,18 +184,17 @@ The application routes are:
 Server routes include `/api/auth/login`, `/api/auth/logout`, `/api/assets`,
 `/api/assets/[id]`, `/api/subsystems`, `/api/subsystems/[id]`, `/api/components`,
 `/api/components/[id]`, `/api/work-orders`, `/api/dependencies`,
-`/api/inventory/[id]`, and `/api/failures`. The non-sensitive `/api/health/redis` endpoint reports
-whether Redis is configured/reachable and whether the current dashboard cache
-entry exists; it never returns the Redis URL or cached dashboard contents.
+`/api/inventory/[id]`, and `/api/failures`. The `/api/health/redis` endpoint reports
+whether Redis is configured/reachable and lists namespaced cache keys with their
+remaining TTLs. It never returns the Redis URL or cached values.
 
 ## Redis verification
 
 After opening the dashboard once, check `http://localhost:3000/api/health/redis`
-while the app is running and after a valid session has loaded the dashboard. A working Redis instance reports
-`"reachable":true`, `"keyPresent":true`, and a positive `"ttlSeconds"`.
-The endpoint checks the versioned opaque key without revealing its name or
-value. Avoid `GET` or key scans during normal operation because cache values
-contain operational records. Stop Redis or temporarily use an invalid
+while the app is running after loading pages that use caching. A working Redis instance reports
+`"reachable":true`, a `count` of cache entries, and an `entries` array showing
+each opaque key and its remaining `ttlSeconds`. Tag-generation metadata is
+excluded, and cache values are never returned. Stop Redis or temporarily use an invalid
 `REDIS_URL` to verify that pages continue reading from MySQL.
 
 ## Safety limitations

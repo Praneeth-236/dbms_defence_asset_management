@@ -13,6 +13,7 @@ export type CacheStore = {
   del(key: string): Promise<unknown>;
   exists(key: string): Promise<number>;
   ttl(key: string): Promise<number>;
+  scan(cursor: string, ...args: Array<string | number>): Promise<[string, string[]]>;
   multi(): {
     set(key: string, value: string): unknown;
     exec(): Promise<Array<[Error | null, unknown]> | null>;
@@ -42,5 +43,11 @@ export function createCacheCore(options: {
     reachable: boolean;
     keyPresent: boolean;
     ttlSeconds: number | null;
+  }>;
+  listCacheEntries(): Promise<{
+    configured: boolean;
+    reachable: boolean;
+    count: number;
+    entries: Array<{ key: string; ttlSeconds: number | null }>;
   }>;
 };
