@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { redisStatus } from "../../../../lib/cache";
+import { listCacheEntries } from "../../../../lib/cache";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const status = await redisStatus();
+  const status = await listCacheEntries();
   return NextResponse.json(
     {
       service: "redis-cache",

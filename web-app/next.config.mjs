@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Permit development asset requests from devices on private LANs.
+  allowedDevOrigins: [
+    "10.*.*.*",
+    "192.168.*.*",
+    ...Array.from({ length: 16 }, (_, index) => `172.${index + 16}.*.*`)
+  ],
   reactStrictMode: true,
   poweredByHeader: false,
   outputFileTracingRoot: process.cwd(),

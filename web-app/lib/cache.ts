@@ -81,6 +81,7 @@ export const deleteCache = cacheCore.deleteCache;
 export const cached = cacheCore.cached;
 export const invalidate = cacheCore.invalidate;
 export const redisStatus = (key = DASHBOARD_CACHE_KEY, tags: string[] = DASHBOARD_CACHE_TAGS) => cacheCore.redisStatus(key, tags);
+export const listCacheEntries = cacheCore.listCacheEntries;
 
 export async function dashboardCacheDiagnostic() {
   const store = client();
